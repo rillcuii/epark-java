@@ -1,0 +1,101 @@
+package view;
+
+import controller.ParkirController;
+import model.Parkir;
+import model.User;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+public class RiwayatParkirView extends JFrame {
+
+    private User user;
+    private ParkirController parkirController;
+
+    private JTable table;
+    private DefaultTableModel tableModel;
+    private JLabel lblInfo;
+    private JButton btnKembali;
+
+    public RiwayatParkirView(User user, ParkirController controller) {
+        this.user = user;
+        this.parkirController = controller;
+
+        setTitle("Riwayat Parkir - Mahasiswa: " + user.getNamaUser());
+        setSize(600, 400);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+        initComponents();
+        loadRiwayatParkir();
+    }
+
+    private void initComponents() {
+        setLayout(new BorderLayout(10,10));
+
+        lblInfo = new JLabel("", SwingConstants.CENTER);
+        lblInfo.setFont(new Font("Arial", Font.BOLD, 16));
+        add(lblInfo, BorderLayout.CENTER);
+
+        // Table dengan kolom riwayat parkir
+        tableModel = new DefaultTableModel(new Object[]{"ID Parkir", "Waktu Masuk", "Waktu Keluar"}, 0) {
+            public boolean isCellEditable(int row, int column) {
+                return false; // tidak bisa edit langsung
+            }
+        };
+        table = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(table);
+        add(scrollPane, BorderLayout.CENTER);
+
+        // Awalnya sembunyikan tabel, nanti kalau ada data baru ditampilkan
+        table.setVisible(false);
+        scrollPane.setVisible(false);
+
+        // Tombol kembali ke dashboard di bawah
+        btnKembali = new JButton("Kembali ke Dashboard");
+        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        btnPanel.add(btnKembali);
+        add(btnPanel, BorderLayout.SOUTH);
+
+        btnKembali.addActionListener(e -> {
+            // Tutup jendela ini
+            dispose();
+
+            // Buka MahasiswaDashboardView
+            new MahasiswaDashboardView(user).setVisible(true);
+        });
+    }
+
+    private void loadRiwayatParkir() {
+        List<Parkir> list = parkirController.getRiwayatParkirByUser(user.getIdUser());
+
+        if (list.isEmpty()) {
+            // Tampilkan label kalau data kosong
+            lblInfo.setText("Riwayat parkir belum ada.");
+        } else {
+            // Sembunyikan label info dan tampilkan tabel
+            lblInfo.setVisible(false);
+            table.setVisible(true);
+            ((JScrollPane)table.getParent().getParent()).setVisible(true);
+
+            // Bersihkan tabel dulu
+            tableModel.setRowCount(0);
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+
+            for (Parkir p : list) {
+                String masuk = p.getWaktuMasuk() != null ? p.getWaktuMasuk().format(formatter) : "-";
+                String keluar = p.getWaktuKeluar() != null ? p.getWaktuKeluar().format(formatter) : "-";
+
+                tableModel.addRow(new Object[]{
+                        p.getIdParkir(),
+                        masuk,
+                        keluar
+                });
+            }
+        }
+    }
+}
