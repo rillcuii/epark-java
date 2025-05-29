@@ -1,17 +1,19 @@
-package mvc.model;
+package model;
 
 import java.time.LocalDateTime;
 
 public class Kendaraan {
     private String idKendaraan;
+    private String userId;
     private String stnkId;
     private String modelKendaraan;
     private String urlPhotoKendaraan;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public Kendaraan(String idKendaraan, String stnkId, String modelKendaraan, String urlPhotoKendaraan, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Kendaraan(String idKendaraan, String userId, String stnkId, String modelKendaraan, String urlPhotoKendaraan, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.idKendaraan = idKendaraan;
+        this.userId = userId;
         this.stnkId = stnkId;
         this.modelKendaraan = modelKendaraan;
         this.urlPhotoKendaraan = urlPhotoKendaraan;
@@ -19,51 +21,14 @@ public class Kendaraan {
         this.updatedAt = updatedAt;
     }
 
-    public String getIdKendaraan() {
-        return idKendaraan;
-    }
+    // Getter dan Setter semua field
+    public String getIdKendaraan() { return idKendaraan; }
+    public String getUserId() { return userId; }
+    public String getStnkId() { return stnkId; }
+    public String getModelKendaraan() { return modelKendaraan; }
+    public String getUrlPhotoKendaraan() { return urlPhotoKendaraan; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
 
-    public void setIdKendaraan(String idKendaraan) {
-        this.idKendaraan = idKendaraan;
-    }
-
-    public String getStnkId() {
-        return stnkId;
-    }
-
-    public void setStnkId(String stnkId) {
-        this.stnkId = stnkId;
-    }
-
-    public String getModelKendaraan() {
-        return modelKendaraan;
-    }
-
-    public void setModelKendaraan(String modelKendaraan) {
-        this.modelKendaraan = modelKendaraan;
-    }
-
-    public String getUrlPhotoKendaraan() {
-        return urlPhotoKendaraan;
-    }
-
-    public void setUrlPhotoKendaraan(String urlPhotoKendaraan) {
-        this.urlPhotoKendaraan = urlPhotoKendaraan;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+    // Setter jika diperlukan...
 }
