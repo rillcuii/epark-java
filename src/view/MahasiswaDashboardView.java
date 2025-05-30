@@ -1,9 +1,11 @@
 package view;
 
 import config.Database;
+import controller.KeluhanController;
 import controller.KendaraanController;
 import controller.ParkirController;
 import model.User;
+import service.KeluhanService;
 import service.KendaraanService;
 import service.ParkirService;
 
@@ -71,7 +73,13 @@ public class MahasiswaDashboardView extends JFrame {
         });
 
         laporKeluhanBtn.addActionListener(e -> {
-            System.out.println("Tombol Lapor Keluhan diklik");
+            dispose(); // tutup dashboard
+
+            Connection conn = Database.connect();
+            KeluhanService keluhanService = new KeluhanService(conn);
+            KeluhanController keluhanController = new KeluhanController(keluhanService);
+
+            new KeluhanView(keluhanController, user.getIdUser()).setVisible(true);
         });
 
         scanQRBtn.addActionListener(e -> {
