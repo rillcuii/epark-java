@@ -9,7 +9,7 @@ public class Keluhan {
     private String judulKeluhan;
     private String keteranganKeluhan;
     private String photoBuktiUrl;
-    private String statusKeluhan;
+    private String statusKeluhan; // langsung String sesuai DB
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -27,75 +27,30 @@ public class Keluhan {
     }
 
     // Getter dan Setter
-    public String getIdKeluhan() {
-        return idKeluhan;
-    }
+    public String getIdKeluhan() { return idKeluhan; }
+    public void setIdKeluhan(String idKeluhan) { this.idKeluhan = idKeluhan; }
 
-    public void setIdKeluhan(String idKeluhan) {
-        this.idKeluhan = idKeluhan;
-    }
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
 
-    public String getUserId() {
-        return userId;
-    }
+    public String getNamaResponden() { return namaResponden; }
+    public void setNamaResponden(String namaResponden) { this.namaResponden = namaResponden; }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
+    public String getJudulKeluhan() { return judulKeluhan; }
+    public void setJudulKeluhan(String judulKeluhan) { this.judulKeluhan = judulKeluhan; }
 
-    public String getNamaResponden() {
-        return namaResponden;
-    }
+    public String getKeteranganKeluhan() { return keteranganKeluhan; }
+    public void setKeteranganKeluhan(String keteranganKeluhan) { this.keteranganKeluhan = keteranganKeluhan; }
 
-    public void setNamaResponden(String namaResponden) {
-        this.namaResponden = namaResponden;
-    }
+    public String getPhotoBuktiUrl() { return photoBuktiUrl; }
+    public void setPhotoBuktiUrl(String photoBuktiUrl) { this.photoBuktiUrl = photoBuktiUrl; }
 
-    public String getJudulKeluhan() {
-        return judulKeluhan;
-    }
+    public String getStatusKeluhan() { return statusKeluhan; }
+    public void setStatusKeluhan(String statusKeluhan) { this.statusKeluhan = statusKeluhan; }
 
-    public void setJudulKeluhan(String judulKeluhan) {
-        this.judulKeluhan = judulKeluhan;
-    }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
-    public String getKeteranganKeluhan() {
-        return keteranganKeluhan;
-    }
-
-    public void setKeteranganKeluhan(String keteranganKeluhan) {
-        this.keteranganKeluhan = keteranganKeluhan;
-    }
-
-    public String getPhotoBuktiUrl() {
-        return photoBuktiUrl;
-    }
-
-    public void setPhotoBuktiUrl(String photoBuktiUrl) {
-        this.photoBuktiUrl = photoBuktiUrl;
-    }
-
-    public String getStatusKeluhan() {
-        return statusKeluhan;
-    }
-
-    public void setStatusKeluhan(String statusKeluhan) {
-        this.statusKeluhan = statusKeluhan;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

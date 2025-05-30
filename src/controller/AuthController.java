@@ -2,6 +2,7 @@ package controller;
 
 import model.User;
 import service.UserService;
+import view.AdminDashboardView;
 import view.LoginView;
 import view.MahasiswaDashboardView;
 
@@ -28,7 +29,9 @@ public class AuthController {
                 }
                 case "Admin" -> {
                     System.out.println("Berhasil login sebagai ADMIN.");
-                    // belum tampil dashboard
+                    AdminDashboardView adminDashboard = new AdminDashboardView(user);
+                    adminDashboard.setVisible(true);
+                    loginView.dispose();
                 }
                 default -> System.out.println("Role tidak dikenali: " + user.getRole());
             }

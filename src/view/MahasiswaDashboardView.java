@@ -73,12 +73,9 @@ public class MahasiswaDashboardView extends JFrame {
         });
 
         laporKeluhanBtn.addActionListener(e -> {
-            dispose(); // tutup dashboard
-
-            Connection conn = Database.connect();
-            KeluhanService keluhanService = new KeluhanService(conn);
+            dispose();
+            KeluhanService keluhanService = new KeluhanService(); // tanpa conn
             KeluhanController keluhanController = new KeluhanController(keluhanService);
-
             new KeluhanView(keluhanController, user.getIdUser()).setVisible(true);
         });
 
