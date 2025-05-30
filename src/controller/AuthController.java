@@ -22,9 +22,15 @@ public class AuthController {
                     dashboard.setVisible(true);
                     loginView.dispose(); // tutup login window
                 }
-                // case "Satpam": ...
-                // case "Admin": ...
-                default -> System.out.println("Role tidak dikenali");
+                case "Satpam" -> {
+                    System.out.println("Berhasil login sebagai SATPAM.");
+                    // belum tampil dashboard
+                }
+                case "Admin" -> {
+                    System.out.println("Berhasil login sebagai ADMIN.");
+                    // belum tampil dashboard
+                }
+                default -> System.out.println("Role tidak dikenali: " + user.getRole());
             }
         } else {
             System.out.println("Login gagal.");
