@@ -21,7 +21,6 @@ public class Kendaraan {
         this.updatedAt = updatedAt;
     }
 
-    // Getter dan Setter semua field
     public String getIdKendaraan() { return idKendaraan; }
     public String getUserId() { return userId; }
     public String getStnkId() { return stnkId; }
@@ -30,5 +29,4 @@ public class Kendaraan {
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
 
-    // Setter jika diperlukan...
 }

@@ -41,7 +41,6 @@ public class UserService {
             stmt.setString(4, user.getPassword());
             stmt.setString(5, user.getRole());
 
-            // Format createdAt dan updatedAt sesuai formatter
             stmt.setString(6, user.getCreatedAt().format(formatter));
             stmt.setString(7, user.getUpdatedAt().format(formatter));
 

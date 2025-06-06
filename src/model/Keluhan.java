@@ -9,7 +9,7 @@ public class Keluhan {
     private String judulKeluhan;
     private String keteranganKeluhan;
     private String photoBuktiUrl;
-    private String statusKeluhan; // langsung String sesuai DB
+    private String statusKeluhan;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -26,7 +26,6 @@ public class Keluhan {
         this.updatedAt = updatedAt;
     }
 
-    // Getter dan Setter
     public String getIdKeluhan() { return idKeluhan; }
     public void setIdKeluhan(String idKeluhan) { this.idKeluhan = idKeluhan; }
 

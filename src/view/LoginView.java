@@ -36,29 +36,24 @@ public class LoginView extends JFrame {
 
         gbc.insets = new Insets(5, 5, 5, 5);
 
-        // Username label
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.LINE_END;
         panel.add(usernameLabel, gbc);
 
-        // Username field
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.LINE_START;
         panel.add(usernameField, gbc);
 
-        // Password label
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.LINE_END;
         panel.add(passwordLabel, gbc);
 
-        // Password field
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.LINE_START;
         panel.add(passwordField, gbc);
 
-        // Login button
         gbc.gridx = 1;
         gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.CENTER;
@@ -66,7 +61,6 @@ public class LoginView extends JFrame {
 
         add(panel);
 
-        // Listener login button
         loginButton.addActionListener(e -> {
             String username = usernameField.getText().trim();
             String password = new String(passwordField.getPassword());

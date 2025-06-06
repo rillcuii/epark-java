@@ -20,7 +20,7 @@ public class ParkirService {
         String sql = "SELECT * FROM parkir WHERE users_id = ? ORDER BY waktu_masuk DESC";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, userId); // pakai String karena id di DB bertipe TEXT
+            stmt.setString(1, userId);
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {

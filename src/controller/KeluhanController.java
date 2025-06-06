@@ -13,8 +13,6 @@ public class KeluhanController {
     public KeluhanController(KeluhanService keluhanService) {
         this.keluhanService = keluhanService;
     }
-
-    // Tambah keluhan dengan status default "Belum Ditangani"
     public void tambahKeluhan(String usersId, String namaResponden, String judulKeluhan,
                               String keteranganKeluhan, String photoBuktiUrl) {
         String idKeluhan = UUID.randomUUID().toString();
@@ -27,7 +25,7 @@ public class KeluhanController {
                 judulKeluhan,
                 keteranganKeluhan,
                 photoBuktiUrl,
-                "Belum Ditangani", // status default string sesuai DB
+                "Belum Ditangani",
                 now,
                 now
         );
@@ -35,14 +33,11 @@ public class KeluhanController {
         keluhanService.insert(keluhan);
     }
 
-    // Ambil semua keluhan berdasarkan userId
     public List<Keluhan> getKeluhanByUser(String usersId) {
         return keluhanService.getAllByUserId(usersId);
     }
 
-    // Update status keluhan berdasarkan id dan status baru
     public void updateStatusKeluhan(String idKeluhan, String statusBaru) {
-        // Bisa tambahkan validasi statusBaru disini jika mau
         keluhanService.updateStatusKeluhan(idKeluhan, statusBaru, LocalDateTime.now());
     }
 

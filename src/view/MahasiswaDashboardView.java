@@ -21,12 +21,13 @@ public class MahasiswaDashboardView extends JFrame {
     private JButton riwayatParkirBtn;
     private JButton laporKeluhanBtn;
     private JButton scanQRBtn;
+    private JButton logoutBtn; // Tombol logout baru
 
     public MahasiswaDashboardView(User user) {
         this.user = user;
 
         setTitle("Dashboard Mahasiswa - " + user.getNamaUser());
-        setSize(400, 300);
+        setSize(400, 350);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -41,9 +42,10 @@ public class MahasiswaDashboardView extends JFrame {
         riwayatParkirBtn = new JButton("Riwayat Parkir");
         laporKeluhanBtn = new JButton("Lapor Keluhan");
         scanQRBtn = new JButton("Scan QR");
+        logoutBtn = new JButton("Logout"); // Inisialisasi tombol logout
 
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(5, 1, 10, 10));
+        panel.setLayout(new GridLayout(6, 1, 10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50));
 
         panel.add(welcomeLabel);
@@ -51,15 +53,15 @@ public class MahasiswaDashboardView extends JFrame {
         panel.add(riwayatParkirBtn);
         panel.add(laporKeluhanBtn);
         panel.add(scanQRBtn);
+        panel.add(logoutBtn); // Tambahkan tombol logout ke panel
 
         add(panel);
 
         kendaraanBtn.addActionListener(e -> {
-            dispose(); // tutup dashboard
+            dispose();
             Connection conn = Database.connect();
             KendaraanService kendaraanService = new KendaraanService(conn);
             KendaraanController kendaraanController = new KendaraanController(kendaraanService);
-
             new KendaraanView(user, kendaraanController).setVisible(true);
         });
 
@@ -68,19 +70,29 @@ public class MahasiswaDashboardView extends JFrame {
             Connection conn = Database.connect();
             ParkirService parkirService = new ParkirService(conn);
             ParkirController parkirController = new ParkirController(parkirService);
-
             new RiwayatParkirView(user, parkirController).setVisible(true);
         });
 
         laporKeluhanBtn.addActionListener(e -> {
             dispose();
-            KeluhanService keluhanService = new KeluhanService(); // tanpa conn
+            KeluhanService keluhanService = new KeluhanService();
             KeluhanController keluhanController = new KeluhanController(keluhanService);
-            new KeluhanView(keluhanController, user.getIdUser()).setVisible(true);
+            new KeluhanView(user, keluhanController, user.getIdUser()).setVisible(true);
         });
 
         scanQRBtn.addActionListener(e -> {
             System.out.println("Tombol Scan QR diklik");
+        });
+
+        logoutBtn.addActionListener(e -> {
+            int konfirmasi = JOptionPane.showConfirmDialog(this,
+                    "Yakin ingin logout?",
+                    "Konfirmasi Logout",
+                    JOptionPane.YES_NO_OPTION);
+            if (konfirmasi == JOptionPane.YES_OPTION) {
+                new LoginView().setVisible(true);
+                dispose();
+            }
         });
     }
 }

@@ -40,31 +40,26 @@ public class RiwayatParkirView extends JFrame {
         lblInfo.setFont(new Font("Arial", Font.BOLD, 16));
         add(lblInfo, BorderLayout.CENTER);
 
-        // Table dengan kolom riwayat parkir
         tableModel = new DefaultTableModel(new Object[]{"ID Parkir", "Waktu Masuk", "Waktu Keluar"}, 0) {
             public boolean isCellEditable(int row, int column) {
-                return false; // tidak bisa edit langsung
+                return false;
             }
         };
         table = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(table);
         add(scrollPane, BorderLayout.CENTER);
 
-        // Awalnya sembunyikan tabel, nanti kalau ada data baru ditampilkan
         table.setVisible(false);
         scrollPane.setVisible(false);
 
-        // Tombol kembali ke dashboard di bawah
         btnKembali = new JButton("Kembali ke Dashboard");
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         btnPanel.add(btnKembali);
         add(btnPanel, BorderLayout.SOUTH);
 
         btnKembali.addActionListener(e -> {
-            // Tutup jendela ini
             dispose();
 
-            // Buka MahasiswaDashboardView
             new MahasiswaDashboardView(user).setVisible(true);
         });
     }
@@ -73,15 +68,12 @@ public class RiwayatParkirView extends JFrame {
         List<Parkir> list = parkirController.getRiwayatParkirByUser(user.getIdUser());
 
         if (list.isEmpty()) {
-            // Tampilkan label kalau data kosong
             lblInfo.setText("Riwayat parkir belum ada.");
         } else {
-            // Sembunyikan label info dan tampilkan tabel
             lblInfo.setVisible(false);
             table.setVisible(true);
             ((JScrollPane)table.getParent().getParent()).setVisible(true);
 
-            // Bersihkan tabel dulu
             tableModel.setRowCount(0);
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");

@@ -19,7 +19,7 @@ public class KendaraanView extends JFrame {
     private DefaultTableModel tableModel;
 
     private JTextField txtId, txtStnkId, txtModel, txtUrlPhoto;
-    private JButton btnTambah, btnUpdate, btnHapus, btnRefresh, btnKembali;
+    private JButton btnTambah, btnUpdate, btnHapus, btnKembali;
 
     public KendaraanView(User user, KendaraanController controller) {
         this.user = user;
@@ -32,6 +32,7 @@ public class KendaraanView extends JFrame {
 
         initComponents();
         loadTableData();
+        aturTombol();
     }
 
     private void initComponents() {
@@ -58,14 +59,12 @@ public class KendaraanView extends JFrame {
         btnTambah = new JButton("Tambah");
         btnUpdate = new JButton("Update");
         btnHapus = new JButton("Hapus");
-        btnRefresh = new JButton("Refresh");
         btnKembali = new JButton("Kembali");
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         btnPanel.add(btnTambah);
         btnPanel.add(btnUpdate);
         btnPanel.add(btnHapus);
-        btnPanel.add(btnRefresh);
         btnPanel.add(btnKembali);
 
         tableModel = new DefaultTableModel(new Object[]{"ID Kendaraan", "STNK ID", "Model", "URL Foto"}, 0) {
@@ -85,16 +84,20 @@ public class KendaraanView extends JFrame {
         btnTambah.addActionListener(e -> tambahKendaraan());
         btnUpdate.addActionListener(e -> updateKendaraan());
         btnHapus.addActionListener(e -> hapusKendaraan());
-        btnRefresh.addActionListener(e -> loadTableData());
         btnKembali.addActionListener(e -> kembaliKeDashboard());
 
         table.getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting() && table.getSelectedRow() != -1) {
+            if (!e.getValueIsAdjusting()) {
                 int selectedRow = table.getSelectedRow();
-                txtId.setText(tableModel.getValueAt(selectedRow, 0).toString());
-                txtStnkId.setText(tableModel.getValueAt(selectedRow, 1).toString());
-                txtModel.setText(tableModel.getValueAt(selectedRow, 2).toString());
-                txtUrlPhoto.setText(tableModel.getValueAt(selectedRow, 3).toString());
+                if (selectedRow != -1) {
+                    txtId.setText(tableModel.getValueAt(selectedRow, 0).toString());
+                    txtStnkId.setText(tableModel.getValueAt(selectedRow, 1).toString());
+                    txtModel.setText(tableModel.getValueAt(selectedRow, 2).toString());
+                    txtUrlPhoto.setText(tableModel.getValueAt(selectedRow, 3).toString());
+                } else {
+                    clearForm();
+                }
+                aturTombol();
             }
         });
     }
@@ -161,7 +164,7 @@ public class KendaraanView extends JFrame {
 
         int confirm = JOptionPane.showConfirmDialog(this, "Yakin ingin menghapus data ini?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
-            kendaraanController.hapusKendaraan(id);  // DISINI hanya 1 parameter sesuai service/controller
+            kendaraanController.hapusKendaraan(id);
             JOptionPane.showMessageDialog(this, "Data kendaraan berhasil dihapus");
             clearForm();
             loadTableData();
@@ -173,11 +176,19 @@ public class KendaraanView extends JFrame {
         txtStnkId.setText("");
         txtModel.setText("");
         txtUrlPhoto.setText("");
+        aturTombol();
+    }
+
+    private void aturTombol() {
+        boolean adaDataDipilih = !txtId.getText().trim().isEmpty();
+
+        btnTambah.setEnabled(!adaDataDipilih);
+        btnUpdate.setEnabled(adaDataDipilih);
+        btnHapus.setEnabled(adaDataDipilih);
     }
 
     private void kembaliKeDashboard() {
         dispose();
-        // TODO: panggil dashboard, misal:
-        // new DashboardView(user).setVisible(true);
+        new MahasiswaDashboardView(user).setVisible(true);
     }
 }

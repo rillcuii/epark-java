@@ -25,16 +25,15 @@ public class SatpamCrudView extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        // === Tabel ===
         tableModel = new DefaultTableModel(new Object[]{"No", "Nama", "Username", "Role"}, 0);
         table = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(table);
 
-        // === Form ===
         JPanel formPanel = new JPanel(new GridLayout(4, 2));
         namaField = new JTextField();
         usernameField = new JTextField();
         passwordField = new JTextField();
+
         formPanel.add(new JLabel("Nama:"));
         formPanel.add(namaField);
         formPanel.add(new JLabel("Username:"));
@@ -42,7 +41,6 @@ public class SatpamCrudView extends JFrame {
         formPanel.add(new JLabel("Password:"));
         formPanel.add(passwordField);
 
-        // === Tombol ===
         JPanel buttonPanel = new JPanel();
         tambahButton = new JButton("Tambah");
         editButton = new JButton("Edit");
@@ -59,11 +57,14 @@ public class SatpamCrudView extends JFrame {
 
         loadData();
 
-        // === Action Listener ===
+        tambahButton.setEnabled(true);
+        editButton.setEnabled(false);
+        hapusButton.setEnabled(false);
+
         tambahButton.addActionListener(e -> {
-            String nama = namaField.getText();
-            String username = usernameField.getText();
-            String password = passwordField.getText();
+            String nama = namaField.getText().trim();
+            String username = usernameField.getText().trim();
+            String password = passwordField.getText().trim();
             if (!nama.isEmpty() && !username.isEmpty() && !password.isEmpty()) {
                 controller.tambahSatpam(nama, username, password);
                 clearForm();
@@ -78,11 +79,10 @@ public class SatpamCrudView extends JFrame {
             if (selectedRow >= 0) {
                 User selectedUser = satpamList.get(selectedRow);
                 String id = selectedUser.getIdUser();
-                String nama = namaField.getText();
-                String username = usernameField.getText();
-                String password = passwordField.getText();
+                String nama = namaField.getText().trim();
+                String username = usernameField.getText().trim();
+                String password = passwordField.getText().trim();
                 if (!nama.isEmpty() && !username.isEmpty() && !password.isEmpty()) {
-                    // buat objek User baru dengan role "Satpam"
                     User updatedUser = new User(id, nama, username, password, "Satpam");
                     controller.updateSatpam(updatedUser);
                     clearForm();
@@ -100,9 +100,13 @@ public class SatpamCrudView extends JFrame {
             if (selectedRow >= 0) {
                 User selectedUser = satpamList.get(selectedRow);
                 String id = selectedUser.getIdUser();
-                controller.hapusSatpam(id);
-                clearForm();
-                loadData();
+                int confirm = JOptionPane.showConfirmDialog(this,
+                        "Yakin ingin menghapus data ini?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+                if (confirm == JOptionPane.YES_OPTION) {
+                    controller.hapusSatpam(id);
+                    clearForm();
+                    loadData();
+                }
             } else {
                 JOptionPane.showMessageDialog(this, "Pilih data yang ingin dihapus!");
             }
@@ -110,17 +114,25 @@ public class SatpamCrudView extends JFrame {
 
         table.getSelectionModel().addListSelectionListener(e -> {
             int selectedRow = table.getSelectedRow();
-            if (selectedRow >= 0 && selectedRow < satpamList.size()) {
+            boolean adaDipilih = selectedRow >= 0 && selectedRow < satpamList.size();
+
+            if (adaDipilih) {
                 User user = satpamList.get(selectedRow);
                 namaField.setText(user.getNamaUser());
                 usernameField.setText(user.getUsername());
                 passwordField.setText(user.getPassword());
+            } else {
+                clearForm();
             }
+
+            tambahButton.setEnabled(!adaDipilih);
+            editButton.setEnabled(adaDipilih);
+            hapusButton.setEnabled(adaDipilih);
         });
 
         kembaliButton.addActionListener(e -> {
             this.dispose();
-            new AdminDashboardView(null).setVisible(true); // bisa diubah sesuai kebutuhan
+            new AdminDashboardView(null).setVisible(true);
         });
 
         setVisible(true);

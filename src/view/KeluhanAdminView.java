@@ -2,6 +2,7 @@ package view;
 
 import controller.KeluhanController;
 import model.Keluhan;
+import model.User;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -10,14 +11,17 @@ import java.util.List;
 
 public class KeluhanAdminView extends JFrame {
     private KeluhanController keluhanController;
+    private User admin;
 
     private JTable tableKeluhan;
     private DefaultTableModel tableModel;
     private JComboBox<String> comboStatus;
     private JButton btnUpdateStatus;
+    private JButton btnKembali;
 
-    public KeluhanAdminView(KeluhanController keluhanController) {
+    public KeluhanAdminView(KeluhanController keluhanController, User admin) {
         this.keluhanController = keluhanController;
+        this.admin = admin;
         initComponents();
         loadDataKeluhan();
     }
@@ -28,7 +32,6 @@ public class KeluhanAdminView extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        // Setup tabel
         tableModel = new DefaultTableModel(new String[]{
                 "ID Keluhan", "Nama Responden", "Judul", "Keterangan", "Status", "Created At", "Updated At"
         }, 0) {
@@ -40,28 +43,25 @@ public class KeluhanAdminView extends JFrame {
         tableKeluhan = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(tableKeluhan);
 
-        // ComboBox status
         comboStatus = new JComboBox<>(new String[]{
                 "Belum Ditangani",
                 "Sedang Ditangani",
                 "Selesai"
         });
 
-        // Tombol update status
         btnUpdateStatus = new JButton("Update Status");
+        btnKembali = new JButton("Kembali");
 
-        // Panel bawah untuk kontrol status
         JPanel panelBottom = new JPanel();
         panelBottom.add(new JLabel("Ubah Status:"));
         panelBottom.add(comboStatus);
         panelBottom.add(btnUpdateStatus);
+        panelBottom.add(btnKembali);
 
-        // Layout frame
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(scrollPane, BorderLayout.CENTER);
         getContentPane().add(panelBottom, BorderLayout.SOUTH);
 
-        // Event tombol update
         btnUpdateStatus.addActionListener(e -> {
             int selectedRow = tableKeluhan.getSelectedRow();
             if (selectedRow == -1) {
@@ -88,6 +88,10 @@ public class KeluhanAdminView extends JFrame {
                         "Sukses",
                         JOptionPane.INFORMATION_MESSAGE);
             }
+        });
+        btnKembali.addActionListener(e -> {
+            new AdminDashboardView(admin).setVisible(true);
+            dispose();
         });
     }
 
