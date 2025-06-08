@@ -16,13 +16,13 @@ import java.sql.Connection;
 
 public class MahasiswaDashboardView extends JFrame {
 
-    private User user;
+    private final User user;
 
     private JButton kendaraanBtn;
     private JButton riwayatParkirBtn;
     private JButton laporKeluhanBtn;
     private JButton scanQRBtn;
-    private JButton logoutBtn; // Tombol logout baru
+    private JButton logoutBtn;
 
     public MahasiswaDashboardView(User user) {
         this.user = user;
@@ -43,10 +43,9 @@ public class MahasiswaDashboardView extends JFrame {
         riwayatParkirBtn = new JButton("Riwayat Parkir");
         laporKeluhanBtn = new JButton("Lapor Keluhan");
         scanQRBtn = new JButton("Scan QR");
-        logoutBtn = new JButton("Logout"); // Inisialisasi tombol logout
+        logoutBtn = new JButton("Logout");
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(6, 1, 10, 10));
+        JPanel panel = new JPanel(new GridLayout(6, 1, 10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50));
 
         panel.add(welcomeLabel);
@@ -54,7 +53,7 @@ public class MahasiswaDashboardView extends JFrame {
         panel.add(riwayatParkirBtn);
         panel.add(laporKeluhanBtn);
         panel.add(scanQRBtn);
-        panel.add(logoutBtn); // Tambahkan tombol logout ke panel
+        panel.add(logoutBtn);
 
         add(panel);
 
@@ -69,8 +68,8 @@ public class MahasiswaDashboardView extends JFrame {
         riwayatParkirBtn.addActionListener(e -> {
             dispose();
             Connection conn = Database.connect();
-            QrCodeService qrCodeService = new QrCodeService(conn);  // buat dulu objek QrCodeService
-            ParkirService parkirService = new ParkirService(conn, qrCodeService);  // kirim 2 parameter
+            QrCodeService qrCodeService = new QrCodeService(conn);
+            ParkirService parkirService = new ParkirService(conn, qrCodeService);
             ParkirController parkirController = new ParkirController(parkirService);
             new RiwayatParkirView(user, parkirController).setVisible(true);
         });
@@ -85,14 +84,17 @@ public class MahasiswaDashboardView extends JFrame {
         scanQRBtn.addActionListener(e -> {
             dispose();
             Connection conn = Database.connect();
-            QrCodeService qrCodeService = new QrCodeService(conn);  // buat objek QrCodeService
-            ParkirService parkirService = new ParkirService(conn, qrCodeService); // kirim 2 argumen
+            QrCodeService qrCodeService = new QrCodeService(conn);
+            KendaraanService kendaraanService = new KendaraanService(conn);
+            KendaraanController kendaraanController = new KendaraanController(kendaraanService);
+            ParkirService parkirService = new ParkirService(conn, qrCodeService);
             ParkirController parkirController = new ParkirController(parkirService);
-            new InputKodeUnikView(user, parkirController, qrCodeService).setVisible(true);
+            new InputKodeUnikView(user, parkirController, kendaraanController, qrCodeService).setVisible(true);
         });
 
         logoutBtn.addActionListener(e -> {
-            int konfirmasi = JOptionPane.showConfirmDialog(this,
+            int konfirmasi = JOptionPane.showConfirmDialog(
+                    this,
                     "Yakin ingin logout?",
                     "Konfirmasi Logout",
                     JOptionPane.YES_NO_OPTION);

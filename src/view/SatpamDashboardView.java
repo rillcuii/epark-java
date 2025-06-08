@@ -4,6 +4,7 @@ import config.Database;
 import controller.QrCodeController;
 import model.User;
 import controller.ParkirController;
+import service.ParkirService;
 import service.QrCodeService;
 
 import javax.swing.*;
@@ -54,7 +55,6 @@ public class SatpamDashboardView extends JFrame {
 
         add(panelButtons, BorderLayout.CENTER);
 
-        // Action Listeners
         btnTampilkanQRCode.addActionListener(e -> {
             Connection conn = Database.connect();
             QrCodeService qrCodeService = new QrCodeService(conn);
@@ -63,18 +63,28 @@ public class SatpamDashboardView extends JFrame {
             qrCodeView.setVisible(true);
         });
         btnDataMasuk.addActionListener(e -> {
-            // TODO: Implementasi tampilkan data mahasiswa yang sedang parkir
-            JOptionPane.showMessageDialog(this, "Fitur Data Mahasiswa Masuk belum diimplementasi.");
+            Connection conn = Database.connect();
+            QrCodeService qrCodeService = new QrCodeService(conn);
+            ParkirService parkirService = new ParkirService(conn, qrCodeService);
+            ParkirController parkirController = new ParkirController(parkirService);
+
+            SatpamParkirKeluarView keluarView = new SatpamParkirKeluarView(parkirController);
+            keluarView.setVisible(true);
         });
 
         btnRiwayatParkir.addActionListener(e -> {
-            // TODO: Implementasi tampilkan riwayat parkir mahasiswa
-            JOptionPane.showMessageDialog(this, "Fitur Riwayat Parkir belum diimplementasi.");
+            Connection conn = Database.connect();
+            QrCodeService qrCodeService = new QrCodeService(conn);
+            ParkirService parkirService = new ParkirService(conn, qrCodeService);
+            ParkirController parkirController = new ParkirController(parkirService);
+
+            SatpamRiwayatParkir riwayatView = new SatpamRiwayatParkir(parkirController);
+            riwayatView.setVisible(true);
         });
 
         btnLogout.addActionListener(e -> {
             dispose();
-            new LoginView().setVisible(true); // Pastikan LoginView sudah ada
+            new LoginView().setVisible(true);
         });
     }
 }

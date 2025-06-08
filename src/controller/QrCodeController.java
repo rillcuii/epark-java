@@ -12,7 +12,6 @@ public class QrCodeController {
         this.qrCodeService = qrCodeService;
     }
 
-    // Generate kode unik 6 digit, simpan dengan expired 5 menit
     public String generateAndSaveQrCode() {
         String kodeUnik = qrCodeService.generateUniqueKodeUnik();
         LocalDateTime expiredAt = LocalDateTime.now().plusMinutes(5);

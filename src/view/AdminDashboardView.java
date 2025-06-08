@@ -34,8 +34,6 @@ public class AdminDashboardView extends JFrame {
             keluhanAdminView.setVisible(true);
             dispose();
         });
-
-        // Aksi untuk tombol logout
         logoutButton.addActionListener(e -> {
             int konfirmasi = JOptionPane.showConfirmDialog(this,
                     "Yakin ingin logout?",

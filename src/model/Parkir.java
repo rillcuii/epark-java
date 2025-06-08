@@ -9,8 +9,8 @@ public class Parkir {
     private LocalDateTime waktuKeluar;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String kendaraanId;
 
-    // Getter dan Setter
     public String getIdParkir() {
         return idParkir;
     }
@@ -57,5 +57,13 @@ public class Parkir {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getKendaraanId() {
+        return kendaraanId;
+    }
+
+    public void setKendaraanId(String kendaraanId) {
+        this.kendaraanId = kendaraanId;
     }
 }

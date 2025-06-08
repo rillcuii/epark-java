@@ -29,4 +29,9 @@ public class Kendaraan {
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
 
+    @Override
+    public String toString() {
+        return this.getStnkId();
+    }
+
 }
