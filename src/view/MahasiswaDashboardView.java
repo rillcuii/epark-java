@@ -8,6 +8,7 @@ import model.User;
 import service.KeluhanService;
 import service.KendaraanService;
 import service.ParkirService;
+import service.QrCodeService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -68,7 +69,8 @@ public class MahasiswaDashboardView extends JFrame {
         riwayatParkirBtn.addActionListener(e -> {
             dispose();
             Connection conn = Database.connect();
-            ParkirService parkirService = new ParkirService(conn);
+            QrCodeService qrCodeService = new QrCodeService(conn);  // buat dulu objek QrCodeService
+            ParkirService parkirService = new ParkirService(conn, qrCodeService);  // kirim 2 parameter
             ParkirController parkirController = new ParkirController(parkirService);
             new RiwayatParkirView(user, parkirController).setVisible(true);
         });
@@ -81,7 +83,12 @@ public class MahasiswaDashboardView extends JFrame {
         });
 
         scanQRBtn.addActionListener(e -> {
-            System.out.println("Tombol Scan QR diklik");
+            dispose();
+            Connection conn = Database.connect();
+            QrCodeService qrCodeService = new QrCodeService(conn);  // buat objek QrCodeService
+            ParkirService parkirService = new ParkirService(conn, qrCodeService); // kirim 2 argumen
+            ParkirController parkirController = new ParkirController(parkirService);
+            new InputKodeUnikView(user, parkirController, qrCodeService).setVisible(true);
         });
 
         logoutBtn.addActionListener(e -> {

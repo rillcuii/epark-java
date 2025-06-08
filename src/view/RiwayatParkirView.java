@@ -19,6 +19,7 @@ public class RiwayatParkirView extends JFrame {
     private DefaultTableModel tableModel;
     private JLabel lblInfo;
     private JButton btnKembali;
+    private JScrollPane scrollPane;
 
     public RiwayatParkirView(User user, ParkirController controller) {
         this.user = user;
@@ -34,21 +35,24 @@ public class RiwayatParkirView extends JFrame {
     }
 
     private void initComponents() {
-        setLayout(new BorderLayout(10,10));
+        setLayout(new BorderLayout(10, 10));
 
         lblInfo = new JLabel("", SwingConstants.CENTER);
         lblInfo.setFont(new Font("Arial", Font.BOLD, 16));
-        add(lblInfo, BorderLayout.CENTER);
+        add(lblInfo, BorderLayout.NORTH);  // Letakkan di atas supaya tidak bentrok dengan tabel
 
         tableModel = new DefaultTableModel(new Object[]{"ID Parkir", "Waktu Masuk", "Waktu Keluar"}, 0) {
+            @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
         table = new JTable(tableModel);
-        JScrollPane scrollPane = new JScrollPane(table);
+
+        scrollPane = new JScrollPane(table);
         add(scrollPane, BorderLayout.CENTER);
 
+        // Sembunyikan tabel dan scrollPane awalnya, tampilkan jika ada data
         table.setVisible(false);
         scrollPane.setVisible(false);
 
@@ -59,7 +63,6 @@ public class RiwayatParkirView extends JFrame {
 
         btnKembali.addActionListener(e -> {
             dispose();
-
             new MahasiswaDashboardView(user).setVisible(true);
         });
     }
@@ -69,10 +72,13 @@ public class RiwayatParkirView extends JFrame {
 
         if (list.isEmpty()) {
             lblInfo.setText("Riwayat parkir belum ada.");
+            lblInfo.setVisible(true);
+            table.setVisible(false);
+            scrollPane.setVisible(false);
         } else {
             lblInfo.setVisible(false);
             table.setVisible(true);
-            ((JScrollPane)table.getParent().getParent()).setVisible(true);
+            scrollPane.setVisible(true);
 
             tableModel.setRowCount(0);
 

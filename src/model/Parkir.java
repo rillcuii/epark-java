@@ -3,18 +3,19 @@ package model;
 import java.time.LocalDateTime;
 
 public class Parkir {
-    private int idParkir;
+    private String idParkir;
     private String userId;
     private LocalDateTime waktuMasuk;
     private LocalDateTime waktuKeluar;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public int getIdParkir() {
+    // Getter dan Setter
+    public String getIdParkir() {
         return idParkir;
     }
 
-    public void setIdParkir(int idParkir) {
+    public void setIdParkir(String idParkir) {
         this.idParkir = idParkir;
     }
 
