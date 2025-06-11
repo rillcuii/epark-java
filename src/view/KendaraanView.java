@@ -7,7 +7,6 @@ import model.User;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class KendaraanView extends JFrame {
@@ -18,7 +17,7 @@ public class KendaraanView extends JFrame {
     private JTable table;
     private DefaultTableModel tableModel;
 
-    private JTextField txtId, txtStnkId, txtModel, txtUrlPhoto;
+    private JTextField txtId, txtStnkId, txtModel;
     private JButton btnTambah, btnUpdate, btnHapus, btnKembali;
 
     public KendaraanView(User user, KendaraanController controller) {
@@ -36,7 +35,7 @@ public class KendaraanView extends JFrame {
     }
 
     private void initComponents() {
-        JPanel formPanel = new JPanel(new GridLayout(5, 2, 10, 10));
+        JPanel formPanel = new JPanel(new GridLayout(4, 2, 10, 10));
         formPanel.setBorder(BorderFactory.createTitledBorder("Form Kendaraan"));
 
         formPanel.add(new JLabel("ID Kendaraan (auto)"));
@@ -44,17 +43,13 @@ public class KendaraanView extends JFrame {
         txtId.setEditable(false);
         formPanel.add(txtId);
 
-        formPanel.add(new JLabel("STNK ID"));
+        formPanel.add(new JLabel("Nomor Polisi"));
         txtStnkId = new JTextField();
         formPanel.add(txtStnkId);
 
         formPanel.add(new JLabel("Model Kendaraan"));
         txtModel = new JTextField();
         formPanel.add(txtModel);
-
-        formPanel.add(new JLabel("URL Foto Kendaraan"));
-        txtUrlPhoto = new JTextField();
-        formPanel.add(txtUrlPhoto);
 
         btnTambah = new JButton("Tambah");
         btnUpdate = new JButton("Update");
@@ -67,7 +62,7 @@ public class KendaraanView extends JFrame {
         btnPanel.add(btnHapus);
         btnPanel.add(btnKembali);
 
-        tableModel = new DefaultTableModel(new Object[]{"ID Kendaraan", "STNK ID", "Model", "URL Foto"}, 0) {
+        tableModel = new DefaultTableModel(new Object[]{"No", "Nomor Polisi", "Model"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -90,10 +85,10 @@ public class KendaraanView extends JFrame {
             if (!e.getValueIsAdjusting()) {
                 int selectedRow = table.getSelectedRow();
                 if (selectedRow != -1) {
-                    txtId.setText(tableModel.getValueAt(selectedRow, 0).toString());
-                    txtStnkId.setText(tableModel.getValueAt(selectedRow, 1).toString());
-                    txtModel.setText(tableModel.getValueAt(selectedRow, 2).toString());
-                    txtUrlPhoto.setText(tableModel.getValueAt(selectedRow, 3).toString());
+                    Kendaraan kendaraanTerpilih = kendaraanController.getKendaraanByUser(user.getIdUser()).get(selectedRow);
+                    txtId.setText(String.valueOf(kendaraanTerpilih.getIdKendaraan()));
+                    txtStnkId.setText(kendaraanTerpilih.getStnkId());
+                    txtModel.setText(kendaraanTerpilih.getModelKendaraan());
                 } else {
                     clearForm();
                 }
@@ -105,14 +100,13 @@ public class KendaraanView extends JFrame {
     private void loadTableData() {
         tableModel.setRowCount(0);
         List<Kendaraan> list = kendaraanController.getKendaraanByUser(user.getIdUser());
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
+        int no = 1;
         for (Kendaraan k : list) {
             tableModel.addRow(new Object[]{
-                    k.getIdKendaraan(),
+                    no++,
                     k.getStnkId(),
-                    k.getModelKendaraan(),
-                    k.getUrlPhotoKendaraan()
+                    k.getModelKendaraan()
             });
         }
     }
@@ -120,14 +114,13 @@ public class KendaraanView extends JFrame {
     private void tambahKendaraan() {
         String stnkId = txtStnkId.getText().trim();
         String model = txtModel.getText().trim();
-        String urlPhoto = txtUrlPhoto.getText().trim();
 
         if (stnkId.isEmpty() || model.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "STNK ID dan Model Kendaraan wajib diisi", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Nomor Polisi dan Model Kendaraan wajib diisi", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        kendaraanController.tambahKendaraan(user.getIdUser(), stnkId, model, urlPhoto);
+        kendaraanController.tambahKendaraan(user.getIdUser(), stnkId, model, "");
         JOptionPane.showMessageDialog(this, "Data kendaraan berhasil ditambahkan");
         clearForm();
         loadTableData();
@@ -142,14 +135,13 @@ public class KendaraanView extends JFrame {
 
         String stnkId = txtStnkId.getText().trim();
         String model = txtModel.getText().trim();
-        String urlPhoto = txtUrlPhoto.getText().trim();
 
         if (stnkId.isEmpty() || model.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "STNK ID dan Model Kendaraan wajib diisi", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Nomor Polisi dan Model Kendaraan wajib diisi", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        kendaraanController.updateKendaraan(id, user.getIdUser(), stnkId, model, urlPhoto);
+        kendaraanController.updateKendaraan(id, user.getIdUser(), stnkId, model, "");
         JOptionPane.showMessageDialog(this, "Data kendaraan berhasil diupdate");
         clearForm();
         loadTableData();
@@ -175,7 +167,6 @@ public class KendaraanView extends JFrame {
         txtId.setText("");
         txtStnkId.setText("");
         txtModel.setText("");
-        txtUrlPhoto.setText("");
         aturTombol();
     }
 

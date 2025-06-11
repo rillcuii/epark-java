@@ -39,9 +39,9 @@ public class RiwayatParkirView extends JFrame {
 
         lblInfo = new JLabel("", SwingConstants.CENTER);
         lblInfo.setFont(new Font("Arial", Font.BOLD, 16));
-        add(lblInfo, BorderLayout.NORTH);  // Letakkan di atas supaya tidak bentrok dengan tabel
+        add(lblInfo, BorderLayout.NORTH);
 
-        tableModel = new DefaultTableModel(new Object[]{"ID Parkir", "Waktu Masuk", "Waktu Keluar"}, 0) {
+        tableModel = new DefaultTableModel(new Object[]{"Nomor", "Waktu Masuk", "Waktu Keluar"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -52,7 +52,6 @@ public class RiwayatParkirView extends JFrame {
         scrollPane = new JScrollPane(table);
         add(scrollPane, BorderLayout.CENTER);
 
-        // Sembunyikan tabel dan scrollPane awalnya, tampilkan jika ada data
         table.setVisible(false);
         scrollPane.setVisible(false);
 
@@ -84,12 +83,13 @@ public class RiwayatParkirView extends JFrame {
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
 
+            int no = 1;
             for (Parkir p : list) {
                 String masuk = p.getWaktuMasuk() != null ? p.getWaktuMasuk().format(formatter) : "-";
                 String keluar = p.getWaktuKeluar() != null ? p.getWaktuKeluar().format(formatter) : "-";
 
                 tableModel.addRow(new Object[]{
-                        p.getIdParkir(),
+                        no++,
                         masuk,
                         keluar
                 });

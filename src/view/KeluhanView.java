@@ -47,7 +47,7 @@ public class KeluhanView extends JFrame {
         lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 20));
         panelMain.add(lblTitle, BorderLayout.NORTH);
 
-        tableModel = new DefaultTableModel(new Object[]{"ID Keluhan", "Judul", "Status", "Tanggal Dibuat"}, 0) {
+        tableModel = new DefaultTableModel(new Object[]{"Nomor", "Judul", "Status", "Tanggal Dibuat"}, 0) {
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
@@ -56,7 +56,6 @@ public class KeluhanView extends JFrame {
         JScrollPane scrollTable = new JScrollPane(tableKeluhan);
         panelMain.add(scrollTable, BorderLayout.CENTER);
 
-        // Panel form dan tombol
         JPanel panelForm = new JPanel();
         panelForm.setLayout(new BoxLayout(panelForm, BoxLayout.Y_AXIS));
         panelForm.setBorder(BorderFactory.createTitledBorder("Tambah Keluhan Baru"));
@@ -66,7 +65,7 @@ public class KeluhanView extends JFrame {
         taKeteranganKeluhan = new JTextArea(5, 30);
         tfPhotoBuktiUrl = new JTextField(30);
 
-        panelForm.add(new JLabel("Nama Responden:"));
+        panelForm.add(new JLabel("Nama:"));
         panelForm.add(tfNamaResponden);
 
         panelForm.add(new JLabel("Judul Keluhan:"));
@@ -74,9 +73,6 @@ public class KeluhanView extends JFrame {
 
         panelForm.add(new JLabel("Keterangan Keluhan:"));
         panelForm.add(new JScrollPane(taKeteranganKeluhan));
-
-        panelForm.add(new JLabel("URL Foto Bukti (opsional):"));
-        panelForm.add(tfPhotoBuktiUrl);
 
         JButton btnTambah = new JButton("Tambah Keluhan");
         btnTambah.addActionListener(this::handleTambahKeluhan);
@@ -100,11 +96,12 @@ public class KeluhanView extends JFrame {
     private void loadTableData() {
         tableModel.setRowCount(0);
         List<Keluhan> keluhanList = keluhanController.getKeluhanByUser(usersId);
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
 
+        int no = 1;
         for (Keluhan k : keluhanList) {
             Object[] rowData = {
-                    k.getIdKeluhan(),
+                    no++,
                     k.getJudulKeluhan(),
                     k.getStatusKeluhan(),
                     k.getCreatedAt().format(dtf)

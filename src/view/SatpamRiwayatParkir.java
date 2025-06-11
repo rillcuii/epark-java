@@ -6,6 +6,7 @@ import service.ParkirService.ParkirSatpamDto;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class SatpamRiwayatParkir extends JFrame {
@@ -26,7 +27,7 @@ public class SatpamRiwayatParkir extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        String[] columns = {"Nama Mahasiswa", "NIM", "Model Kendaraan", "Waktu Masuk", "Waktu Keluar"};
+        String[] columns = {"Nama Mahasiswa", "Nomor Polisi", "Model Kendaraan", "Waktu Masuk", "Waktu Keluar"};
         tableModel = new DefaultTableModel(columns, 0);
         table = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(table);
@@ -45,14 +46,20 @@ public class SatpamRiwayatParkir extends JFrame {
 
     private void loadData() {
         List<ParkirSatpamDto> riwayat = parkirController.getSemuaRiwayatParkir();
+        tableModel.setRowCount(0);
+
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
 
         for (ParkirSatpamDto p : riwayat) {
+            String waktuMasukFormatted = p.getWaktuMasuk().format(dtf);
+            String waktuKeluarFormatted = p.getWaktuKeluar().format(dtf);
+
             Object[] rowData = {
                     p.getNamaUser(),
-                    p.getNimMahasiswa(),
+                    p.getstnkID(),
                     p.getModelKendaraan(),
-                    p.getWaktuMasuk(),
-                    p.getWaktuKeluar()
+                    waktuMasukFormatted,
+                    waktuKeluarFormatted
             };
             tableModel.addRow(rowData);
         }

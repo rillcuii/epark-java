@@ -20,22 +20,22 @@ public class ParkirService {
 
     public static class ParkirSatpamDto {
         private String namaUser;
-        private String nimMahasiswa;
+        private String stnkID;
         private String modelKendaraan;
         private LocalDateTime waktuMasuk;
         private LocalDateTime waktuKeluar;
 
-        public ParkirSatpamDto(String namaUser, String nimMahasiswa, String modelKendaraan,
+        public ParkirSatpamDto(String namaUser, String stnkID, String modelKendaraan,
                                LocalDateTime waktuMasuk, LocalDateTime waktuKeluar) {
             this.namaUser = namaUser;
-            this.nimMahasiswa = nimMahasiswa;
+            this.stnkID = stnkID;
             this.modelKendaraan = modelKendaraan;
             this.waktuMasuk = waktuMasuk;
             this.waktuKeluar = waktuKeluar;
         }
 
         public String getNamaUser() { return namaUser; }
-        public String getNimMahasiswa() { return nimMahasiswa; }
+        public String getstnkID() { return stnkID; }
         public String getModelKendaraan() { return modelKendaraan; }
         public LocalDateTime getWaktuMasuk() { return waktuMasuk; }
         public LocalDateTime getWaktuKeluar() { return waktuKeluar; }
@@ -44,7 +44,7 @@ public class ParkirService {
     public List<ParkirSatpamDto> getMahasiswaKeluarHariIni() {
         List<ParkirSatpamDto> list = new ArrayList<>();
 
-        String sql = "SELECT u.nama_user, u.nim_mahasiswa, k.model_kendaraan, p.waktu_masuk, p.waktu_keluar " +
+        String sql = "SELECT u.nama_user, k.stnk_id, k.model_kendaraan, p.waktu_masuk, p.waktu_keluar " +
                 "FROM parkir p " +
                 "JOIN users u ON p.users_id = u.id_user " +
                 "JOIN kendaraan k ON k.id_kendaraan = p.kendaraan_id " +
@@ -56,14 +56,14 @@ public class ParkirService {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 String namaUser = rs.getString("nama_user");
-                String nim = rs.getString("nim_mahasiswa");
+                String stnkId = rs.getString("stnk_id");
                 String model = rs.getString("model_kendaraan");
                 LocalDateTime masuk = rs.getString("waktu_masuk") != null ?
                         LocalDateTime.parse(rs.getString("waktu_masuk")) : null;
                 LocalDateTime keluar = rs.getString("waktu_keluar") != null ?
                         LocalDateTime.parse(rs.getString("waktu_keluar")) : null;
 
-                list.add(new ParkirSatpamDto(namaUser, nim, model, masuk, keluar));
+                list.add(new ParkirSatpamDto(namaUser, stnkId, model, masuk, keluar));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -75,7 +75,7 @@ public class ParkirService {
     public List<ParkirSatpamDto> getSemuaRiwayatParkir() {
         List<ParkirSatpamDto> list = new ArrayList<>();
 
-        String sql = "SELECT u.nama_user, u.nim_mahasiswa, k.model_kendaraan, p.waktu_masuk, p.waktu_keluar " +
+        String sql = "SELECT u.nama_user, k.stnk_id, k.model_kendaraan, p.waktu_masuk, p.waktu_keluar " +
                 "FROM parkir p " +
                 "JOIN users u ON p.users_id = u.id_user " +
                 "JOIN kendaraan k ON k.id_kendaraan = p.kendaraan_id " +
@@ -86,14 +86,14 @@ public class ParkirService {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 String namaUser = rs.getString("nama_user");
-                String nim = rs.getString("nim_mahasiswa");
+                String stnkId = rs.getString("stnk_id");
                 String model = rs.getString("model_kendaraan");
                 LocalDateTime masuk = rs.getString("waktu_masuk") != null ?
                         LocalDateTime.parse(rs.getString("waktu_masuk")) : null;
                 LocalDateTime keluar = rs.getString("waktu_keluar") != null ?
                         LocalDateTime.parse(rs.getString("waktu_keluar")) : null;
 
-                list.add(new ParkirSatpamDto(namaUser, nim, model, masuk, keluar));
+                list.add(new ParkirSatpamDto(namaUser, stnkId, model, masuk, keluar));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -101,6 +101,7 @@ public class ParkirService {
 
         return list;
     }
+
 
     public List<Parkir> getRiwayatParkirByUser(String userId) {
         List<Parkir> list = new ArrayList<>();
