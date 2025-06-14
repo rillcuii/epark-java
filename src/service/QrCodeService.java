@@ -18,7 +18,7 @@ public class QrCodeService {
     }
 
     public String generateKodeUnik() {
-        int kode = 100000 + random.nextInt(900000);
+        int kode = 100 + random.nextInt(900);
         return String.valueOf(kode);
     }
 
