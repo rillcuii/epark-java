@@ -8,7 +8,10 @@ import service.QrCodeService;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.util.List;
+import java.util.Random; // Import untuk Random
 
 public class InputKodeUnikView extends JFrame {
 
@@ -19,10 +22,14 @@ public class InputKodeUnikView extends JFrame {
 
     private JTextField txtKodeUnik;
     private JComboBox<Kendaraan> comboKendaraan;
+    private JTextField txtTokenUnik; // Tambahkan JTextField untuk token unik
+    private JButton btnGenerateToken; // Tombol untuk generate token
     private JButton btnParkirMasuk;
     private JButton btnParkirKeluar;
     private JButton btnKembali;
     private JLabel lblStatus;
+
+    private final String TOKEN_PLACEHOLDER = "Masukkan minimal 3 huruf atau angka"; // Placeholder text
 
     public InputKodeUnikView(User user, ParkirController parkirController, KendaraanController kendaraanController, QrCodeService qrCodeService) {
         this.user = user;
@@ -31,7 +38,7 @@ public class InputKodeUnikView extends JFrame {
         this.qrCodeService = qrCodeService;
 
         setTitle("Input Kode Unik Parkir - Mahasiswa: " + user.getNamaUser());
-        setSize(450, 350);
+        setSize(450, 400); // Sesuaikan ukuran frame
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -64,6 +71,51 @@ public class InputKodeUnikView extends JFrame {
         panelInput.add(new JLabel("Pilih Kendaraan:"));
         panelInput.add(comboKendaraan);
 
+        // Tambahkan input field dan tombol generate token
+        panelInput.add(Box.createRigidArea(new Dimension(0, 15)));
+        panelInput.add(new JLabel("Token Unik:"));
+
+        // Gunakan JPanel dengan FlowLayout untuk menempatkan JTextField dan JButton secara horizontal
+        JPanel panelToken = new JPanel();
+        panelToken.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 0)); // Spasi 10px antar komponen, align kiri
+        panelToken.setAlignmentX(Component.LEFT_ALIGNMENT); // Pastikan panel rata kiri
+
+        txtTokenUnik = new JTextField();
+        txtTokenUnik.setFont(new Font("Arial", Font.ITALIC, 14)); // Font italic untuk placeholder
+        txtTokenUnik.setForeground(Color.GRAY); // Warna abu-abu untuk placeholder
+        txtTokenUnik.setText(TOKEN_PLACEHOLDER); // Set placeholder awal
+        txtTokenUnik.setPreferredSize(new Dimension(250, 30)); // Set ukuran preferred untuk field
+
+        // Tambahkan FocusListener untuk placeholder
+        txtTokenUnik.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (txtTokenUnik.getText().equals(TOKEN_PLACEHOLDER)) {
+                    txtTokenUnik.setText("");
+                    txtTokenUnik.setFont(new Font("Arial", Font.PLAIN, 16));
+                    txtTokenUnik.setForeground(Color.BLACK);
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (txtTokenUnik.getText().isEmpty()) {
+                    txtTokenUnik.setText(TOKEN_PLACEHOLDER);
+                    txtTokenUnik.setFont(new Font("Arial", Font.ITALIC, 14));
+                    txtTokenUnik.setForeground(Color.GRAY);
+                }
+            }
+        });
+
+        btnGenerateToken = new JButton("Generate");
+        btnGenerateToken.setFont(new Font("Arial", Font.PLAIN, 12));
+        btnGenerateToken.setPreferredSize(new Dimension(90, 30)); // Set ukuran preferred untuk tombol
+
+        panelToken.add(txtTokenUnik);
+        panelToken.add(btnGenerateToken);
+        panelInput.add(panelToken);
+
+
         add(panelInput, BorderLayout.CENTER);
 
         JPanel panelBawah = new JPanel();
@@ -88,10 +140,25 @@ public class InputKodeUnikView extends JFrame {
 
         add(panelBawah, BorderLayout.SOUTH);
 
+        // Action Listener untuk tombol generate token
+        btnGenerateToken.addActionListener(e -> {
+            txtTokenUnik.setText(generateRandomCode(4)); // Generate 6 karakter acak
+            txtTokenUnik.setFont(new Font("Arial", Font.PLAIN, 16)); // Kembalikan font normal setelah generate
+            txtTokenUnik.setForeground(Color.BLACK); // Kembalikan warna teks normal
+        });
+
         btnParkirMasuk.addActionListener(e -> {
             String kodeUnik = txtKodeUnik.getText().trim();
+            String tokenUnik = txtTokenUnik.getText().trim(); // Ambil nilai token unik
+
             if (kodeUnik.isEmpty()) {
                 showStatus("Kode unik tidak boleh kosong.", Color.RED);
+                return;
+            }
+
+            // Validasi token unik, pastikan bukan placeholder
+            if (tokenUnik.isEmpty() || tokenUnik.equals(TOKEN_PLACEHOLDER)) {
+                showStatus("Token unik tidak boleh kosong atau masih placeholder.", Color.RED);
                 return;
             }
 
@@ -116,12 +183,13 @@ public class InputKodeUnikView extends JFrame {
                 return;
             }
 
-            boolean sukses = parkirController.parkirMasuk(user.getIdUser(), kendaraan.getIdKendaraan(), kodeUnik);
+            boolean sukses = parkirController.parkirMasuk(user.getIdUser(), kendaraan.getIdKendaraan(), kodeUnik, tokenUnik);
             if (sukses) {
                 showStatus("Parkir masuk berhasil!", Color.GREEN.darker());
                 comboKendaraan.setEnabled(false);
                 btnParkirMasuk.setEnabled(false);
                 btnParkirKeluar.setEnabled(true);
+                btnGenerateToken.setEnabled(false); // Nonaktifkan tombol generate setelah parkir masuk
             } else {
                 showStatus("Parkir masuk gagal, coba lagi.", Color.RED);
             }
@@ -129,8 +197,16 @@ public class InputKodeUnikView extends JFrame {
 
         btnParkirKeluar.addActionListener(e -> {
             String kodeUnik = txtKodeUnik.getText().trim();
+            String tokenUnik = txtTokenUnik.getText().trim(); // Ambil nilai token unik
+
             if (kodeUnik.isEmpty()) {
                 showStatus("Kode unik tidak boleh kosong.", Color.RED);
+                return;
+            }
+
+            // Validasi token unik, pastikan bukan placeholder
+            if (tokenUnik.isEmpty() || tokenUnik.equals(TOKEN_PLACEHOLDER)) {
+                showStatus("Token unik tidak boleh kosong atau masih placeholder.", Color.RED);
                 return;
             }
 
@@ -144,17 +220,26 @@ public class InputKodeUnikView extends JFrame {
                 return;
             }
 
+            if(!parkirController.tokenUnikIsValid(user.getIdUser(), tokenUnik)){
+                showStatus("Token unik anda salah.", Color.RED);
+                return;
+            }
+
             if (!parkirController.hasActiveParkir(user.getIdUser())) {
                 showStatus("Anda belum melakukan parkir masuk.", Color.RED);
                 return;
             }
 
-            boolean sukses = parkirController.parkirKeluar(user.getIdUser(), kodeUnik);
+            boolean sukses = parkirController.parkirKeluar(user.getIdUser(), kodeUnik, tokenUnik);
             if (sukses) {
                 showStatus("Parkir keluar berhasil!", Color.GREEN.darker());
                 comboKendaraan.setEnabled(true);
                 btnParkirMasuk.setEnabled(true);
                 btnParkirKeluar.setEnabled(false);
+                btnGenerateToken.setEnabled(true); // Aktifkan kembali tombol generate setelah parkir keluar
+                txtTokenUnik.setText(TOKEN_PLACEHOLDER); // Set kembali ke placeholder
+                txtTokenUnik.setFont(new Font("Arial", Font.ITALIC, 14)); // Font italic untuk placeholder
+                txtTokenUnik.setForeground(Color.GRAY); // Warna abu-abu untuk placeholder
             } else {
                 showStatus("Parkir keluar gagal, coba lagi.", Color.RED);
             }
@@ -164,6 +249,17 @@ public class InputKodeUnikView extends JFrame {
             dispose();
             new MahasiswaDashboardView(user).setVisible(true);
         });
+    }
+
+    // Metode untuk menghasilkan kode acak
+    private String generateRandomCode(int length) {
+        String chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            sb.append(chars.charAt(random.nextInt(chars.length())));
+        }
+        return sb.toString();
     }
 
     private void loadKendaraan() {
@@ -195,11 +291,16 @@ public class InputKodeUnikView extends JFrame {
             comboKendaraan.setEnabled(false);
             btnParkirMasuk.setEnabled(false);
             btnParkirKeluar.setEnabled(true);
+            btnGenerateToken.setEnabled(false); // Nonaktifkan tombol generate
             showStatus("Anda sedang parkir dengan kendaraan: " + (kendaraanAktif != null ? kendaraanAktif.getStnkId() : "-"), Color.BLUE);
         } else {
             comboKendaraan.setEnabled(true);
             btnParkirMasuk.setEnabled(true);
             btnParkirKeluar.setEnabled(false);
+            btnGenerateToken.setEnabled(true); // Aktifkan tombol generate
+            txtTokenUnik.setText(TOKEN_PLACEHOLDER); // Set placeholder
+            txtTokenUnik.setFont(new Font("Arial", Font.ITALIC, 14)); // Font italic untuk placeholder
+            txtTokenUnik.setForeground(Color.GRAY); // Warna abu-abu untuk placeholder
             showStatus("Silakan input kode unik dan pilih kendaraan untuk parkir masuk.", Color.BLACK);
         }
     }

@@ -18,12 +18,12 @@ public class ParkirController {
         return parkirService.getRiwayatParkirByUser(userId);
     }
 
-    public boolean parkirMasuk(String userId, String kendaraanId, String kodeUnik) {
-        return parkirService.parkirMasuk(userId, kendaraanId, kodeUnik);
+    public boolean parkirMasuk(String userId, String kendaraanId, String kodeUnik, String tokenUnik) {
+        return parkirService.parkirMasuk(userId, kendaraanId, kodeUnik, tokenUnik);
     }
 
-    public boolean parkirKeluar(String userId, String kodeUnik) {
-        return parkirService.parkirKeluar(userId, kodeUnik);
+    public boolean parkirKeluar(String userId, String kodeUnik, String tokenKeluar) {
+        return parkirService.parkirKeluar(userId, kodeUnik, tokenKeluar);
     }
 
     public boolean hasActiveParkir(String userId) {
@@ -46,8 +46,15 @@ public class ParkirController {
         return parkirService.getMahasiswaSedangParkirHariIni();
     }
 
+    public boolean tokenUnikIsValid(String userId, String tokenUnik){
+        return parkirService.tokenUnikIsValid(userId, tokenUnik);
+    }
+
     // Tambahan untuk menghitung sisa slot parkir
     public int getSisaTempatParkir() {
         return parkirService.getSisaTempatParkir();
+    }
+    public String getTokenUnik(String userId) {
+        return parkirService.getTokenUnik(userId);
     }
 }

@@ -1,6 +1,7 @@
 package service;
 
 import model.Parkir;
+import model.QrCodeSession;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -157,7 +158,7 @@ public class ParkirService {
         return false;
     }
 
-    public boolean parkirMasuk(String userId, String kendaraanId, String kodeUnik) {
+    public boolean parkirMasuk(String userId, String kendaraanId, String kodeUnik, String tokenUnik) {
         if (!qrCodeService.isKodeUnikValid(kodeUnik)) {
             System.out.println("Kode unik QR Code tidak valid atau sudah expired");
             return false;
@@ -171,8 +172,8 @@ public class ParkirService {
         String idParkir = UUID.randomUUID().toString();
         LocalDateTime now = LocalDateTime.now();
 
-        String sql = "INSERT INTO parkir (id_parkir, users_id, kendaraan_id, waktu_masuk, created_at, updated_at, kode_unik) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO parkir (id_parkir, users_id, kendaraan_id, waktu_masuk, created_at, updated_at, kode_unik, token_unik) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, idParkir);
             stmt.setString(2, userId);
@@ -181,6 +182,7 @@ public class ParkirService {
             stmt.setString(5, now.toString());
             stmt.setString(6, now.toString());
             stmt.setString(7, kodeUnik);
+            stmt.setString(8, tokenUnik);
             int affected = stmt.executeUpdate();
             return affected > 0;
         } catch (SQLException e) {
@@ -203,7 +205,7 @@ public class ParkirService {
         return null; // tidak ada parkir aktif
     }
 
-    public boolean parkirKeluar(String userId, String kodeUnik) {
+    public boolean parkirKeluar(String userId, String kodeUnik, String tokenUnik) {
         if (!qrCodeService.isKodeUnikValid(kodeUnik)) {
             System.out.println("Kode unik QR Code tidak valid atau sudah expired");
             return false;
@@ -211,6 +213,11 @@ public class ParkirService {
 
         if (!hasActiveParkir(userId)) {
             System.out.println("User tidak ada parkir aktif");
+            return false;
+        }
+
+        if(!tokenUnikIsValid(userId, tokenUnik)){
+            System.out.println("Token Unik Tidak Valid");
             return false;
         }
 
@@ -274,6 +281,43 @@ public class ParkirService {
             e.printStackTrace();
         }
         return 500; // default kalau gagal query
+    }
+
+    public boolean tokenUnikIsValid(String userId, String tokenUnik) {
+        try{
+            String tokenUnikDb = getTokenUnik(userId);
+            if(tokenUnikDb.equals(tokenUnik)){
+                return true;
+            }
+
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+
+
+    }
+
+    public String getTokenUnik(String userId){
+        String sql = "SELECT token_unik FROM parkir WHERE users_id = ? AND waktu_keluar IS NULL";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, userId);
+            ResultSet rs = ps.executeQuery();
+
+            String tokenUnikDb = rs.getString("token_unik");
+
+            if (tokenUnikDb == null || tokenUnikDb.isEmpty()) {
+                return null;
+            }
+
+            return tokenUnikDb;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
 }

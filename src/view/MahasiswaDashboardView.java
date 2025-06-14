@@ -17,6 +17,9 @@ import java.sql.Connection;
 public class MahasiswaDashboardView extends JFrame {
 
     private final User user;
+    private Connection conn;
+    private QrCodeService qrCodeService;
+    private ParkirService parkirService;
 
     private JButton kendaraanBtn;
     private JButton riwayatParkirBtn;
@@ -26,6 +29,9 @@ public class MahasiswaDashboardView extends JFrame {
 
     public MahasiswaDashboardView(User user) {
         this.user = user;
+        this.conn = Database.connect();
+        this.qrCodeService = new QrCodeService(conn);
+        this.parkirService = new ParkirService(conn, qrCodeService);
 
         setTitle("Dashboard Mahasiswa - " + user.getNamaUser());
         setSize(400, 350);
@@ -36,7 +42,9 @@ public class MahasiswaDashboardView extends JFrame {
     }
 
     private void initComponents() {
-        JLabel welcomeLabel = new JLabel("Selamat datang, " + user.getNamaUser(), JLabel.CENTER);
+        String tokenUnik = parkirService.getTokenUnik(user.getIdUser());
+        String displayTokenUnik = tokenUnik == null ? "" : "#" + tokenUnik;
+        JLabel welcomeLabel = new JLabel("Selamat datang, " + user.getNamaUser() + displayTokenUnik , JLabel.CENTER);
         welcomeLabel.setFont(new Font("Arial", Font.BOLD, 16));
 
         kendaraanBtn = new JButton("Kelola Kendaraan");
