@@ -48,9 +48,11 @@ public class ParkirService {
                 "FROM parkir p " +
                 "JOIN users u ON p.users_id = u.id_user " +
                 "JOIN kendaraan k ON k.id_kendaraan = p.kendaraan_id " +
-                "WHERE p.waktu_keluar IS NOT NULL " +
-                "AND DATE(p.waktu_keluar) = DATE('now') " +
-                "ORDER BY p.waktu_keluar DESC";
+                "WHERE p.waktu_masuk IS NOT NULL " +
+                "AND p.waktu_keluar IS NOT NULL " +
+                "AND DATE(p.waktu_masuk) = DATE('now', 'localtime') " +
+                "AND DATE(p.waktu_keluar) = DATE('now', 'localtime') " +
+                "ORDER BY p.waktu_masuk DESC";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
@@ -71,6 +73,8 @@ public class ParkirService {
 
         return list;
     }
+
+
 
     public List<ParkirSatpamDto> getSemuaRiwayatParkir() {
         List<ParkirSatpamDto> list = new ArrayList<>();
@@ -79,8 +83,7 @@ public class ParkirService {
                 "FROM parkir p " +
                 "JOIN users u ON p.users_id = u.id_user " +
                 "JOIN kendaraan k ON k.id_kendaraan = p.kendaraan_id " +
-                "WHERE p.waktu_keluar IS NOT NULL " +
-                "ORDER BY p.waktu_keluar DESC";
+                "ORDER BY p.waktu_masuk DESC"; // Tidak pakai filter keluar
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
@@ -101,6 +104,7 @@ public class ParkirService {
 
         return list;
     }
+
 
 
     public List<Parkir> getRiwayatParkirByUser(String userId) {
@@ -224,4 +228,52 @@ public class ParkirService {
             return false;
         }
     }
+
+    // Ambil data mahasiswa yang sedang parkir hari ini
+    public List<ParkirSatpamDto> getMahasiswaSedangParkirHariIni() {
+        List<ParkirSatpamDto> list = new ArrayList<>();
+
+        String sql = "SELECT u.nama_user, k.stnk_id, k.model_kendaraan, p.waktu_masuk, p.waktu_keluar " +
+                "FROM parkir p " +
+                "JOIN users u ON p.users_id = u.id_user " +
+                "JOIN kendaraan k ON k.id_kendaraan = p.kendaraan_id " +
+                "WHERE p.waktu_keluar IS NULL AND DATE(p.waktu_masuk) = DATE('now') " +
+                "ORDER BY p.waktu_masuk DESC";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                String namaUser = rs.getString("nama_user");
+                String stnkId = rs.getString("stnk_id");
+                String model = rs.getString("model_kendaraan");
+                LocalDateTime masuk = rs.getString("waktu_masuk") != null ?
+                        LocalDateTime.parse(rs.getString("waktu_masuk")) : null;
+
+                // waktu_keluar pasti null, tapi kita tetap parsing sebagai null
+                LocalDateTime keluar = null;
+
+                list.add(new ParkirSatpamDto(namaUser, stnkId, model, masuk, keluar));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    // Hitung sisa tempat parkir (dari total 500 slot)
+    public int getSisaTempatParkir() {
+        String sql = "SELECT COUNT(*) FROM parkir WHERE waktu_keluar IS NULL AND DATE(waktu_masuk) = DATE('now')";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                int sedangParkir = rs.getInt(1);
+                return 500 - sedangParkir;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 500; // default kalau gagal query
+    }
+
 }

@@ -57,7 +57,6 @@ public class KendaraanService {
                 now,
                 now
         );
-
         insert(kendaraan);
     }
 

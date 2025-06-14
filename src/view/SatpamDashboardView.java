@@ -18,7 +18,6 @@ public class SatpamDashboardView extends JFrame {
 
     private JButton btnTampilkanQRCode;
     private JButton btnDataMasuk;
-    private JButton btnRiwayatParkir;
     private JButton btnLogout;
 
     public SatpamDashboardView(User user, ParkirController parkirController) {
@@ -45,12 +44,10 @@ public class SatpamDashboardView extends JFrame {
 
         btnTampilkanQRCode = new JButton("Tampilkan QR Code Parkir");
         btnDataMasuk = new JButton("Lihat Data Mahasiswa Masuk");
-        btnRiwayatParkir = new JButton("Lihat Riwayat Parkir Mahasiswa");
         btnLogout = new JButton("Logout");
 
         panelButtons.add(btnTampilkanQRCode);
         panelButtons.add(btnDataMasuk);
-        panelButtons.add(btnRiwayatParkir);
         panelButtons.add(btnLogout);
 
         add(panelButtons, BorderLayout.CENTER);
@@ -70,16 +67,6 @@ public class SatpamDashboardView extends JFrame {
 
             SatpamParkirKeluarView keluarView = new SatpamParkirKeluarView(parkirController);
             keluarView.setVisible(true);
-        });
-
-        btnRiwayatParkir.addActionListener(e -> {
-            Connection conn = Database.connect();
-            QrCodeService qrCodeService = new QrCodeService(conn);
-            ParkirService parkirService = new ParkirService(conn, qrCodeService);
-            ParkirController parkirController = new ParkirController(parkirService);
-
-            SatpamRiwayatParkir riwayatView = new SatpamRiwayatParkir(parkirController);
-            riwayatView.setVisible(true);
         });
 
         btnLogout.addActionListener(e -> {

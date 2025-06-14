@@ -20,7 +20,4 @@ public class QrCodeController {
         else return null;
     }
 
-    public boolean cekKodeValid(String kodeUnik) {
-        return qrCodeService.isKodeUnikValid(kodeUnik);
-    }
 }

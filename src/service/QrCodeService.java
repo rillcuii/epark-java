@@ -18,7 +18,7 @@ public class QrCodeService {
     }
 
     public String generateKodeUnik() {
-        int kode = 100000 + random.nextInt(900000); // 100000 s/d 999999
+        int kode = 100000 + random.nextInt(900000);
         return String.valueOf(kode);
     }
 
@@ -89,10 +89,6 @@ public class QrCodeService {
             e.printStackTrace();
             return false;
         }
-    }
-
-    public boolean validateKodeUnik(String kodeUnik) {
-        return isKodeUnikExist(kodeUnik) && isKodeUnikValid(kodeUnik);
     }
 
     public boolean isKodeUnikExpired(String kodeUnik) {

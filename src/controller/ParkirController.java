@@ -41,4 +41,13 @@ public class ParkirController {
     public String getActiveParkirKendaraanId(String userId) {
         return parkirService.getActiveParkirKendaraanId(userId);
     }
+
+    public List<ParkirSatpamDto> getMahasiswaSedangParkirHariIni() {
+        return parkirService.getMahasiswaSedangParkirHariIni();
+    }
+
+    // Tambahan untuk menghitung sisa slot parkir
+    public int getSisaTempatParkir() {
+        return parkirService.getSisaTempatParkir();
+    }
 }
